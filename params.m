@@ -58,3 +58,55 @@ m_ctr_cyl = density * v_ctr_cyl;
 m_arm = density * v_arm;
 m_motor = density * v_motor;
 m_prop = density * v_prop;
+
+
+% Transformation Matrices between Arm relative to body
+% Given positions and rotation matrices
+% Number of arms (assuming arm_pos is already defined)
+n_arms = length(arm_pos);
+
+% Initialize transformation matrices
+T_arm_rel_body = zeros(4, 4, n_arms);
+
+for i = 1:n_arms
+    % Construct homogeneous transformation matrix from existing struct data
+    T = [arm_pos(i).rot, arm_pos(i).pos'; 
+         0 0 0 1];
+    T_arm_rel_body(:,:,i) = T;
+    
+    % Display transformation matrix
+    fprintf('Transformation matrix for arm %d:\n', i);
+    disp(T);
+end
+
+% Transformation between Arm Start Frame and Propeller R frame
+R_prop_rel_arm = eye(3,3); % Same Rotation
+P_prop_rel_arm = [0.229;0;0.035]; % in +x we got the 0.229m arm length and in +z is half the motor puck length 0.035 meters
+T_prop_rel_arm_start = [R_prop_rel_arm, P_prop_rel_arm; 
+         0 0 0 1];
+
+% Transformation Propeller Relative to body
+T_b_p1 = T_arm_rel_body(:, :, 1) * T_prop_rel_arm_start;
+T_b_p2 = T_arm_rel_body(:, :, 2) * T_prop_rel_arm_start;
+T_b_p3 = T_arm_rel_body(:, :, 3) * T_prop_rel_arm_start;
+T_b_p4 = T_arm_rel_body(:, :, 4) * T_prop_rel_arm_start;
+T_b_p5 = T_arm_rel_body(:, :, 5) * T_prop_rel_arm_start;
+T_b_p6 = T_arm_rel_body(:, :, 6) * T_prop_rel_arm_start;
+
+fprintf('Transformation matrix for propeller 1 relative to body :\n');
+disp(T_b_p1);
+
+fprintf('Transformation matrix for propeller 2 relative to body :\n');
+disp(T_b_p2);
+
+fprintf('Transformation matrix for propeller 3 relative to body :\n');
+disp(T_b_p3);
+
+fprintf('Transformation matrix for propeller 4 relative to body :\n');
+disp(T_b_p4);
+
+fprintf('Transformation matrix for propeller 5 relative to body :\n');
+disp(T_b_p5);
+
+fprintf('Transformation matrix for propeller 6 relative to body :\n');
+disp(T_b_p6);
